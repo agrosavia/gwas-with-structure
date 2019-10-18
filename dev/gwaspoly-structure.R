@@ -13,6 +13,9 @@ options (width=300)
 ##gwasModelsTypes = c("Kinship")
 ##snpModels       = c("general")
 ##testModels      = c("general")
+##multipleTestingModel = "Bonferroni" 
+##multipleTestingModel = "FDR"
+multipleTestingModel = "permute"
 gwasModelsTypes = c("Naive", "Kinship", "Structure", "PCs", "Kinship+Structure", "Kinship+PCs", "Structure+PCs", "Kinship+Structure+PCs")
 snpModels       = c("general","additive","1-dom", "2-dom")
 testModels      = c("additive","general","1-dom-alt","1-dom-ref","2-dom-alt","2-dom-ref")
@@ -201,7 +204,7 @@ showResults <- function (data4, testModels, testTraits, gwasModel) {
 	msg ("Plotting results...")
 
 	# QTL Detection
-	data5 = set.threshold (data4, method="Bonferroni",level=0.05)
+	data5 = set.threshold (data4, method=multipleTestingModel,level=0.05,n.permute=100,n.core=3)
 	significativeQTLs = get.QTL (data5)
 
 	msg (">>>>", "Writing results...")

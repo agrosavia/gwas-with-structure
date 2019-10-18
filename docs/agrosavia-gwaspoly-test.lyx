@@ -75,7 +75,7 @@ graphicboxes
 \paragraph_indentation default
 \is_math_indent 0
 \math_numbering_side default
-\quotes_style french
+\quotes_style swiss
 \dynamic_quotes 0
 \papercolumns 1
 \papersides 1
@@ -118,7 +118,7 @@ Los enfoques corresponden a la manera de realizar el proceso GWAS, es decir,
 \begin_layout Itemize
 
 \series bold
-Naive
+Naive (N)
 \series default
 : GWAS por defecto, sin adicionar parentesco ni corrección de estructura
  poblacional.
@@ -174,7 +174,7 @@ status open
 \begin_layout Itemize
 
 \series bold
-Kinship:
+Kinship (K):
 \series default
  GWAS sólo con parentesco, sin corrección de estructura poblacional.
  La matriz de parentesco se construyó utilizando las funciones del software
@@ -186,21 +186,30 @@ función set.K).
 \begin_layout Itemize
 
 \series bold
-Structure:
+Structure (Q):
 \series default
  GWAS sólo con corrección de estructura poblacional.
  Para esto se utilizaron dos tipos de datos: la estructura poblacional calculada
  por Berdugo2016; y los componentes principales (PCs) calculados por la
- misma herramienta GWASpoly, con número de PCs=5).
+ misma herramienta GWASpoly, con número de PCs=20).
 \end_layout
 
 \begin_layout Itemize
 
 \series bold
-Kinship+Structure:
+Componentes Principales (P):
 \series default
- GWAS con parentesco y corrección de estructura poblacional.
- Realiza la combinación de los dos anteriores enfoques.
+ GWAS con correción de estructura poblacional usando los componentes principales
+ calculadod por el software GWASpoly.
+ Se calculan 20 componentes
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+K+Q, K+P, Q+P, K+Q+P: 
+\series default
+GWAS con combinaciones de los dos anteriores enfoques.
 \end_layout
 
 \begin_layout Subsection
@@ -221,7 +230,7 @@ Estos modelos se refieren a la forma como los alelos de un marcador contribuyen
 \end_layout
 
 \begin_layout Standard
-De acuerdo al manual del software GWASpoly, los modelos que se pueden modelar
+De acuerdo al manual del software GWASpoly, los modelos que se pueden realizar
  son:
 \end_layout
 
@@ -230,7 +239,8 @@ De acuerdo al manual del software GWASpoly, los modelos que se pueden modelar
 \series bold
 General
 \series default
-: No hay restricciones en los efectos de los diferentes niveles de dosificación
+: Efecto de cada clase de genotipo (AAAA, ..., BBBB) se considera arbitraria
+ y estadisticamente equivalente.
 \end_layout
 
 \begin_layout Itemize
@@ -238,17 +248,53 @@ General
 \series bold
 Additive
 \series default
-: Indica que el efecto del marcador es proporcional a la dosificación del
- alelo alterno
+: Efecto del SNP es proporcional a la dosis del alelo menor.
 \end_layout
 
 \begin_layout Itemize
 
 \series bold
-X-dom
+2-Dom-X:
 \series default
-: donde X puede ser un entero de 1~ploidía/2 y se refiere a la dosificación
- de alelo que se necesita para completar la dominancia.
+ Dominante doble donde el estado duplex (AABB) tiene el mismo efecto que
+ los otros estados (AAAB, AAAA, ABBB, BBBB).
+ X se refiere al alelo por referencia (como aparece en el genoma) o alterno.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+1-Dom-X
+\series default
+: Dominante simple donde todos los heterozigotos (AAAB, AABB, ABBB) son
+ equivalentes a uno de los homozigotos (AAAA o BBBB).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+the general type of genetic model allows the SNP effect for each genotypic
+ class to be arbitrary and statistically equivalent.
+ In the additive model the SNP effect is proportional to the dosage of the
+ minor allele.
+ In the simplex dominant models, all the heterozygotes (AAAB, AABB, ABBB)
+ are equivalent to one of the homozygotes (AAAA or BBBB).
+ In the duplex dominant models, the duplex state (AABB) has the same effect
+ as either the simplex (AAAB) and nulliplex (AAAA) or the triplex (ABBB)
+ and quadriplex (BBBB) states.
+ In the diploidized models (diplo), all heterozygous classes have the same
+ effect, resembling a traditional diploid dosage model (AA, AB, BB), and
+ have gene action models encompassing the general and additive effects.
+ The diploid genotype calling was also used for GWAS analyses, using the
+ following gene actions: diplo-general, diplo-additive, simplex-dom-alt,
+ and simplex-dom-ref.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -284,11 +330,17 @@ Resultados
 \end_layout
 
 \begin_layout Standard
-Los resultados se muestran a través de una tabla y dos figuras que relaciona
- los modelos de GWAS evaluados (Naive, Kinship, Structure, Kinship+Structure)
- y los modelos de acción de gen disponibles en el software GWASpoly (general,
- aditivo, 1-dominante, 2-dominante).
+Los resultados se muestran de acuerdo a los tres tipos de corrección para
+ evaluación de hipótesis múltiples disponibles en el softwar GWASpoly.
+ Para cada tipo de corrección se muestran a través de una tabla y dos figuras
+ que relaciona los modelos de GWAS evaluados (Naive, Kinship, Structure,
+ Kinship+Structure) y los modelos de acción de gen disponibles en el software
+ GWASpoly (general, aditivo, 1-dominante, 2-dominante).
  
+\end_layout
+
+\begin_layout Subsection
+Corrección por Bonferroni
 \end_layout
 
 \begin_layout Standard
@@ -345,7 +397,7 @@ ntile (Q-Q) plots of the observed vs.
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Bondad de los diferentes modelos
 \end_layout
 
@@ -367,7 +419,7 @@ $-log_{10}(p)$
  
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 SNPs significantes
 \end_layout
 
@@ -381,7 +433,7 @@ Y la segunda figura muestra a través de gráficos Manhattan el umbral de
  QTLs significativos descritos en la tabla anterior.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 QTLs significativos
 \end_layout
 
@@ -1927,7 +1979,7 @@ Comparación de gráficos Quartile-Quartile (QQ plots) para los 6 modelos
 placement H
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -4636,7 +4688,6 @@ Effect
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4658,7 +4709,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4680,7 +4730,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4702,7 +4751,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4724,7 +4772,6 @@ solcap_snp_c1_12386
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4746,7 +4793,6 @@ solcap_snp_c1_12386
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4768,7 +4814,6 @@ solcap_snp_c1_12386
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4790,7 +4835,6 @@ solcap_snp_c1_12386
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4812,7 +4856,6 @@ solcap_snp_c1_12386
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4834,7 +4877,6 @@ solcap_snp_c1_12386
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4858,7 +4900,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4880,7 +4921,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4902,7 +4942,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4924,7 +4963,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4946,7 +4984,6 @@ solcap_snp_c1_5895
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4968,7 +5005,6 @@ solcap_snp_c1_5895
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -4990,7 +5026,6 @@ solcap_snp_c1_5895
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5012,7 +5047,6 @@ solcap_snp_c1_5895
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5034,7 +5068,6 @@ solcap_snp_c1_5895
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5056,7 +5089,6 @@ solcap_snp_c1_5895
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5080,7 +5112,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5102,7 +5133,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5124,7 +5154,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5146,7 +5175,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5168,7 +5196,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5190,7 +5217,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5212,7 +5238,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5234,7 +5259,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5256,7 +5280,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5278,7 +5301,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5302,7 +5324,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5324,7 +5345,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5346,7 +5366,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5368,7 +5387,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5390,7 +5408,6 @@ solcap_snp_c2_15929
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5412,7 +5429,6 @@ solcap_snp_c2_15929
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5434,7 +5450,6 @@ solcap_snp_c2_15929
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5456,7 +5471,6 @@ solcap_snp_c2_15929
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5478,7 +5492,6 @@ solcap_snp_c2_15929
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5500,7 +5513,6 @@ solcap_snp_c2_15929
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5524,7 +5536,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5546,7 +5557,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5568,7 +5578,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5590,7 +5599,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5612,7 +5620,6 @@ solcap_snp_c2_12404
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5634,7 +5641,6 @@ solcap_snp_c2_12404
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5656,7 +5662,6 @@ solcap_snp_c2_12404
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5678,7 +5683,6 @@ solcap_snp_c2_12404
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5700,7 +5704,6 @@ solcap_snp_c2_12404
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5722,7 +5725,6 @@ solcap_snp_c2_12404
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5746,7 +5748,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5768,7 +5769,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5790,7 +5790,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5812,7 +5811,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5834,7 +5832,6 @@ solcap_snp_c2_12601
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5856,7 +5853,6 @@ solcap_snp_c2_12601
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5878,7 +5874,6 @@ solcap_snp_c2_12601
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5900,7 +5895,6 @@ solcap_snp_c2_12601
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5922,7 +5916,6 @@ solcap_snp_c2_12601
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5944,7 +5937,6 @@ solcap_snp_c2_12601
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5968,7 +5960,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -5990,7 +5981,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6012,7 +6002,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6034,7 +6023,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6056,7 +6044,6 @@ solcap_snp_c2_49245
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6078,7 +6065,6 @@ solcap_snp_c2_49245
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6100,7 +6086,6 @@ solcap_snp_c2_49245
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6122,7 +6107,6 @@ solcap_snp_c2_49245
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6144,7 +6128,6 @@ solcap_snp_c2_49245
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6166,7 +6149,6 @@ solcap_snp_c2_49245
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6190,7 +6172,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6212,7 +6193,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6234,7 +6214,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6256,7 +6235,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6278,7 +6256,6 @@ solcap_snp_c2_41463
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6300,7 +6277,6 @@ solcap_snp_c2_41463
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6322,7 +6298,6 @@ solcap_snp_c2_41463
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6344,7 +6319,6 @@ solcap_snp_c2_41463
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6366,7 +6340,6 @@ solcap_snp_c2_41463
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6388,7 +6361,6 @@ solcap_snp_c2_41463
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6412,7 +6384,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6434,7 +6405,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6456,7 +6426,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6478,7 +6447,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6500,7 +6468,6 @@ solcap_snp_c1_821
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6522,7 +6489,6 @@ solcap_snp_c1_821
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6544,7 +6510,6 @@ solcap_snp_c1_821
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6566,7 +6531,6 @@ solcap_snp_c1_821
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6588,7 +6552,6 @@ solcap_snp_c1_821
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6610,7 +6573,6 @@ solcap_snp_c1_821
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6634,7 +6596,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6656,7 +6617,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6678,7 +6638,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6700,7 +6659,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6722,7 +6680,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6744,7 +6701,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6766,7 +6722,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6788,7 +6743,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6810,7 +6764,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6832,7 +6785,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6856,7 +6808,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6878,7 +6829,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6900,7 +6850,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6922,7 +6871,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6944,7 +6892,6 @@ solcap_snp_c1_11246
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6966,7 +6913,6 @@ solcap_snp_c1_11246
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -6988,7 +6934,6 @@ solcap_snp_c1_11246
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7010,7 +6955,6 @@ solcap_snp_c1_11246
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7032,7 +6976,6 @@ solcap_snp_c1_11246
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7054,7 +6997,6 @@ solcap_snp_c1_11246
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7078,7 +7020,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7100,7 +7041,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7122,7 +7062,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7144,7 +7083,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7166,7 +7104,6 @@ solcap_snp_c2_36664
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7188,7 +7125,6 @@ solcap_snp_c2_36664
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7210,7 +7146,6 @@ solcap_snp_c2_36664
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7232,7 +7167,6 @@ solcap_snp_c2_36664
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7254,7 +7188,6 @@ solcap_snp_c2_36664
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7276,7 +7209,6 @@ solcap_snp_c2_36664
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7300,7 +7232,6 @@ solcap_snp_c2_36664
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7322,7 +7253,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7344,7 +7274,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7366,7 +7295,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7388,7 +7316,6 @@ solcap_snp_c2_4875
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7410,7 +7337,6 @@ solcap_snp_c2_4875
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7432,7 +7358,6 @@ solcap_snp_c2_4875
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7454,7 +7379,6 @@ solcap_snp_c2_4875
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7476,7 +7400,6 @@ solcap_snp_c2_4875
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7498,7 +7421,6 @@ solcap_snp_c2_4875
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7522,7 +7444,6 @@ solcap_snp_c2_4875
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7544,7 +7465,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7566,7 +7486,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7588,7 +7507,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7610,7 +7528,6 @@ solcap_snp_c1_3484
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7632,7 +7549,6 @@ solcap_snp_c1_3484
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7654,7 +7570,6 @@ solcap_snp_c1_3484
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7676,7 +7591,6 @@ solcap_snp_c1_3484
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7698,7 +7612,6 @@ solcap_snp_c1_3484
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7720,7 +7633,6 @@ solcap_snp_c1_3484
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7744,7 +7656,6 @@ solcap_snp_c1_3484
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7766,7 +7677,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7788,7 +7698,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7810,7 +7719,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7832,7 +7740,6 @@ solcap_snp_c1_7325
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7854,7 +7761,6 @@ solcap_snp_c1_7325
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7876,7 +7782,6 @@ solcap_snp_c1_7325
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7898,7 +7803,6 @@ solcap_snp_c1_7325
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7920,7 +7824,6 @@ solcap_snp_c1_7325
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7942,7 +7845,6 @@ solcap_snp_c1_7325
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7966,7 +7868,6 @@ solcap_snp_c1_7325
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -7988,7 +7889,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8010,7 +7910,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8032,7 +7931,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8054,7 +7952,6 @@ solcap_snp_c2_40748
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8076,7 +7973,6 @@ solcap_snp_c2_40748
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8098,7 +7994,6 @@ solcap_snp_c2_40748
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8120,7 +8015,6 @@ solcap_snp_c2_40748
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8142,7 +8036,6 @@ solcap_snp_c2_40748
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8164,7 +8057,6 @@ solcap_snp_c2_40748
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8188,7 +8080,6 @@ solcap_snp_c2_40748
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8210,7 +8101,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8232,7 +8122,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8254,7 +8143,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8276,7 +8164,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8298,7 +8185,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8320,7 +8206,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8342,7 +8227,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8364,7 +8248,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8386,7 +8269,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8410,7 +8292,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8432,7 +8313,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8454,7 +8334,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8476,7 +8355,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8498,7 +8376,6 @@ solcap_snp_c1_6992
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8520,7 +8397,6 @@ solcap_snp_c1_6992
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8542,7 +8418,6 @@ solcap_snp_c1_6992
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8564,7 +8439,6 @@ solcap_snp_c1_6992
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8586,7 +8460,6 @@ solcap_snp_c1_6992
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8608,7 +8481,6 @@ solcap_snp_c1_6992
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8632,7 +8504,6 @@ solcap_snp_c1_6992
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8654,7 +8525,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8676,7 +8546,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8698,7 +8567,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8720,7 +8588,6 @@ solcap_snp_c1_15787
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8742,7 +8609,6 @@ solcap_snp_c1_15787
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8764,7 +8630,6 @@ solcap_snp_c1_15787
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8786,7 +8651,6 @@ solcap_snp_c1_15787
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8808,7 +8672,6 @@ solcap_snp_c1_15787
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8830,7 +8693,6 @@ solcap_snp_c1_15787
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8854,7 +8716,6 @@ solcap_snp_c1_15787
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8876,7 +8737,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8898,7 +8758,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8920,7 +8779,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8942,7 +8800,6 @@ solcap_snp_c1_10855
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8964,7 +8821,6 @@ solcap_snp_c1_10855
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -8986,7 +8842,6 @@ solcap_snp_c1_10855
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9008,7 +8863,6 @@ solcap_snp_c1_10855
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9030,7 +8884,6 @@ solcap_snp_c1_10855
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9052,7 +8905,6 @@ solcap_snp_c1_10855
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9076,7 +8928,6 @@ solcap_snp_c1_10855
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9098,7 +8949,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9120,7 +8970,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9142,7 +8991,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9164,7 +9012,6 @@ solcap_snp_c1_11907
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9186,7 +9033,6 @@ solcap_snp_c1_11907
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9208,7 +9054,6 @@ solcap_snp_c1_11907
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9230,7 +9075,6 @@ solcap_snp_c1_11907
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9252,7 +9096,6 @@ solcap_snp_c1_11907
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9274,7 +9117,6 @@ solcap_snp_c1_11907
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9298,7 +9140,6 @@ solcap_snp_c1_11907
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9320,7 +9161,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9342,7 +9182,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9364,7 +9203,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9386,7 +9224,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9408,7 +9245,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9430,7 +9266,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9452,7 +9287,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9474,7 +9308,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9496,7 +9329,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9524,7 +9356,7 @@ solcap_snp_c2_2998
 placement H
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Caption Standard
@@ -9689,7 +9521,6 @@ Effect
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9711,7 +9542,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9733,7 +9563,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9755,7 +9584,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9777,7 +9605,6 @@ solcap_snp_c1_12386
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9799,7 +9626,6 @@ solcap_snp_c1_12386
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9821,7 +9647,6 @@ solcap_snp_c1_12386
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9843,7 +9668,6 @@ solcap_snp_c1_12386
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9865,7 +9689,6 @@ solcap_snp_c1_12386
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9887,7 +9710,6 @@ solcap_snp_c1_12386
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9911,7 +9733,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9933,7 +9754,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9955,7 +9775,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9977,7 +9796,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -9999,7 +9817,6 @@ solcap_snp_c1_5895
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10021,7 +9838,6 @@ solcap_snp_c1_5895
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10043,7 +9859,6 @@ solcap_snp_c1_5895
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10065,7 +9880,6 @@ solcap_snp_c1_5895
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10087,7 +9901,6 @@ solcap_snp_c1_5895
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10109,7 +9922,6 @@ solcap_snp_c1_5895
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10133,7 +9945,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10155,7 +9966,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10177,7 +9987,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10199,7 +10008,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10221,7 +10029,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10243,7 +10050,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10265,7 +10071,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10287,7 +10092,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10309,7 +10113,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10331,7 +10134,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10355,7 +10157,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10377,7 +10178,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10399,7 +10199,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10421,7 +10220,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10443,7 +10241,6 @@ solcap_snp_c2_15929
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10465,7 +10262,6 @@ solcap_snp_c2_15929
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10487,7 +10283,6 @@ solcap_snp_c2_15929
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10509,7 +10304,6 @@ solcap_snp_c2_15929
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10531,7 +10325,6 @@ solcap_snp_c2_15929
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10553,7 +10346,6 @@ solcap_snp_c2_15929
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10577,7 +10369,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10599,7 +10390,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10621,7 +10411,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10643,7 +10432,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10665,7 +10453,6 @@ solcap_snp_c2_12404
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10687,7 +10474,6 @@ solcap_snp_c2_12404
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10709,7 +10495,6 @@ solcap_snp_c2_12404
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10731,7 +10516,6 @@ solcap_snp_c2_12404
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10753,7 +10537,6 @@ solcap_snp_c2_12404
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10775,7 +10558,6 @@ solcap_snp_c2_12404
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10799,7 +10581,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10821,7 +10602,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10843,7 +10623,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10865,7 +10644,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10887,7 +10665,6 @@ solcap_snp_c2_12601
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10909,7 +10686,6 @@ solcap_snp_c2_12601
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10931,7 +10707,6 @@ solcap_snp_c2_12601
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10953,7 +10728,6 @@ solcap_snp_c2_12601
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10975,7 +10749,6 @@ solcap_snp_c2_12601
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -10997,7 +10770,6 @@ solcap_snp_c2_12601
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11021,7 +10793,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11043,7 +10814,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11065,7 +10835,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11087,7 +10856,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11109,7 +10877,6 @@ solcap_snp_c2_49245
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11131,7 +10898,6 @@ solcap_snp_c2_49245
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11153,7 +10919,6 @@ solcap_snp_c2_49245
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11175,7 +10940,6 @@ solcap_snp_c2_49245
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11197,7 +10961,6 @@ solcap_snp_c2_49245
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11219,7 +10982,6 @@ solcap_snp_c2_49245
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11243,7 +11005,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11265,7 +11026,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11287,7 +11047,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11309,7 +11068,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11331,7 +11089,6 @@ solcap_snp_c2_41463
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11353,7 +11110,6 @@ solcap_snp_c2_41463
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11375,7 +11131,6 @@ solcap_snp_c2_41463
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11397,7 +11152,6 @@ solcap_snp_c2_41463
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11419,7 +11173,6 @@ solcap_snp_c2_41463
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11441,7 +11194,6 @@ solcap_snp_c2_41463
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11465,7 +11217,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11487,7 +11238,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11509,7 +11259,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11531,7 +11280,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11553,7 +11301,6 @@ solcap_snp_c1_821
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11575,7 +11322,6 @@ solcap_snp_c1_821
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11597,7 +11343,6 @@ solcap_snp_c1_821
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11619,7 +11364,6 @@ solcap_snp_c1_821
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11641,7 +11385,6 @@ solcap_snp_c1_821
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11663,7 +11406,6 @@ solcap_snp_c1_821
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11687,7 +11429,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11709,7 +11450,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11731,7 +11471,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11753,7 +11492,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11775,7 +11513,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11797,7 +11534,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11819,7 +11555,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11841,7 +11576,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11863,7 +11597,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11885,7 +11618,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11909,7 +11641,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11931,7 +11662,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11953,7 +11683,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11975,7 +11704,6 @@ general
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -11997,7 +11725,6 @@ solcap_snp_c1_11246
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12019,7 +11746,6 @@ solcap_snp_c1_11246
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12041,7 +11767,6 @@ solcap_snp_c1_11246
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12063,7 +11788,6 @@ solcap_snp_c1_11246
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12085,7 +11809,6 @@ solcap_snp_c1_11246
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12107,7 +11830,6 @@ solcap_snp_c1_11246
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12131,7 +11853,6 @@ NA
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12153,7 +11874,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12175,7 +11895,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12197,7 +11916,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12219,7 +11937,6 @@ solcap_snp_c2_36664
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12241,7 +11958,6 @@ solcap_snp_c2_36664
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12263,7 +11979,6 @@ solcap_snp_c2_36664
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12285,7 +12000,6 @@ solcap_snp_c2_36664
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12307,7 +12021,6 @@ solcap_snp_c2_36664
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12329,7 +12042,6 @@ solcap_snp_c2_36664
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12353,7 +12065,6 @@ solcap_snp_c2_36664
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12375,7 +12086,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12397,7 +12107,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12419,7 +12128,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12441,7 +12149,6 @@ solcap_snp_c2_4875
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12463,7 +12170,6 @@ solcap_snp_c2_4875
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12485,7 +12191,6 @@ solcap_snp_c2_4875
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12507,7 +12212,6 @@ solcap_snp_c2_4875
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12529,7 +12233,6 @@ solcap_snp_c2_4875
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12551,7 +12254,6 @@ solcap_snp_c2_4875
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12575,7 +12277,6 @@ solcap_snp_c2_4875
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12597,7 +12298,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12619,7 +12319,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12641,7 +12340,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12663,7 +12361,6 @@ solcap_snp_c1_3484
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12685,7 +12382,6 @@ solcap_snp_c1_3484
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12707,7 +12403,6 @@ solcap_snp_c1_3484
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12729,7 +12424,6 @@ solcap_snp_c1_3484
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12751,7 +12445,6 @@ solcap_snp_c1_3484
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12773,7 +12466,6 @@ solcap_snp_c1_3484
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12797,7 +12489,6 @@ solcap_snp_c1_3484
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12819,7 +12510,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12841,7 +12531,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12863,7 +12552,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12885,7 +12573,6 @@ solcap_snp_c1_7325
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12907,7 +12594,6 @@ solcap_snp_c1_7325
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12929,7 +12615,6 @@ solcap_snp_c1_7325
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12951,7 +12636,6 @@ solcap_snp_c1_7325
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12973,7 +12657,6 @@ solcap_snp_c1_7325
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -12995,7 +12678,6 @@ solcap_snp_c1_7325
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13019,7 +12701,6 @@ solcap_snp_c1_7325
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13041,7 +12722,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13063,7 +12743,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13085,7 +12764,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13107,7 +12785,6 @@ solcap_snp_c2_40748
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13129,7 +12806,6 @@ solcap_snp_c2_40748
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13151,7 +12827,6 @@ solcap_snp_c2_40748
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13173,7 +12848,6 @@ solcap_snp_c2_40748
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13195,7 +12869,6 @@ solcap_snp_c2_40748
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13217,7 +12890,6 @@ solcap_snp_c2_40748
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13241,7 +12913,6 @@ solcap_snp_c2_40748
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13263,7 +12934,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13285,7 +12955,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13307,7 +12976,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13329,7 +12997,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13351,7 +13018,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13373,7 +13039,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13395,7 +13060,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13417,7 +13081,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13439,7 +13102,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13463,7 +13125,6 @@ solcap_snp_c2_32854
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13485,7 +13146,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13507,7 +13167,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13529,7 +13188,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13551,7 +13209,6 @@ solcap_snp_c1_6992
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13573,7 +13230,6 @@ solcap_snp_c1_6992
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13595,7 +13251,6 @@ solcap_snp_c1_6992
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13617,7 +13272,6 @@ solcap_snp_c1_6992
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13639,7 +13293,6 @@ solcap_snp_c1_6992
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13661,7 +13314,6 @@ solcap_snp_c1_6992
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13685,7 +13337,6 @@ solcap_snp_c1_6992
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13707,7 +13358,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13729,7 +13379,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13751,7 +13400,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13773,7 +13421,6 @@ solcap_snp_c1_15787
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13795,7 +13442,6 @@ solcap_snp_c1_15787
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13817,7 +13463,6 @@ solcap_snp_c1_15787
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13839,7 +13484,6 @@ solcap_snp_c1_15787
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13861,7 +13505,6 @@ solcap_snp_c1_15787
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13883,7 +13526,6 @@ solcap_snp_c1_15787
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13907,7 +13549,6 @@ solcap_snp_c1_15787
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13929,7 +13570,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13951,7 +13591,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13973,7 +13612,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -13995,7 +13633,6 @@ solcap_snp_c1_10855
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14017,7 +13654,6 @@ solcap_snp_c1_10855
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14039,7 +13675,6 @@ solcap_snp_c1_10855
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14061,7 +13696,6 @@ solcap_snp_c1_10855
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14083,7 +13717,6 @@ solcap_snp_c1_10855
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14105,7 +13738,6 @@ solcap_snp_c1_10855
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14129,7 +13761,6 @@ solcap_snp_c1_10855
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14151,7 +13782,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14173,7 +13803,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14195,7 +13824,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14217,7 +13845,6 @@ solcap_snp_c1_11907
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14239,7 +13866,6 @@ solcap_snp_c1_11907
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14261,7 +13887,6 @@ solcap_snp_c1_11907
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14283,7 +13908,6 @@ solcap_snp_c1_11907
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14305,7 +13929,6 @@ solcap_snp_c1_11907
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14327,7 +13950,6 @@ solcap_snp_c1_11907
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14351,7 +13973,6 @@ solcap_snp_c1_11907
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14373,7 +13994,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14395,7 +14015,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14417,7 +14036,6 @@ gota
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14439,7 +14057,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14461,7 +14078,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14483,7 +14099,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14505,7 +14120,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14527,7 +14141,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14549,7 +14162,6 @@ solcap_snp_c2_2998
 \emph off
 \bar no
 \strikeout off
-\xout off
 \uuline off
 \uwave off
 \noun off
@@ -14561,6 +14173,3058 @@ solcap_snp_c2_2998
 </cell>
 </row>
 </lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Corrección por False Discovery Rate (FDR)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hspace*{-2cm}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+setlength{
+\backslash
+tabcolsep}{5pt}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="10" columns="8">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+General
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Additive
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1-dom-alt
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1-dom-ref
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2-dom-alt
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2-dom-ref
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Naive-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Naive-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Naive-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Naive-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Naive-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Naive-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+N
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+K
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Structure-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Structure-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Structure-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Structure-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Structure-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Structure-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+Q
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Observed
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-PCs-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-PCs-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-PCs-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-PCs-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-PCs-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-PCs-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+P
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+Structure-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+Structure-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+Structure-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+Structure-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+Structure-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+Structure-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+K+Q
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+PCs-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+PCs-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+PCs-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+PCs-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+PCs-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+PCs-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+K+P
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Structure+PCs-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Structure+PCs-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Structure+PCs-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Structure+PCs-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Structure+PCs-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Structure+PCs-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+Q+P
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+Structure+PCs-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+Structure+PCs-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+Structure+PCs-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+Structure+PCs-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+Structure+PCs-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-qq-Kinship+Structure+PCs-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+K+Q+P
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Expected
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Comparación de gráficos Quartile-Quartile (QQ plots) para los 6 modelos
+ de GWAS (Naive, Kinship, Structure, Structure+Kinship) y los 4 modelos
+ de acción de gen disponibles en el software GWASpoly (general, additive,
+ 1-dom, 2-dom).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align left
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hspace*{-2cm}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+setlength{
+\backslash
+tabcolsep}{5pt}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="10" columns="8">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="2cm">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+General
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Additive
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1-dom-alt
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1-dom-ref
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2-dom-alt
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2-dom-ref
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Naive-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Naive-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Naive-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Naive-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Naive-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Naive-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+N
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+K
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Structure-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Structure-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Structure-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Structure-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Structure-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Structure-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+Q
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Observed
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-PCs-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-PCs-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-PCs-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-PCs-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-PCs-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-PCs-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+P
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+Structure-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+Structure-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+Structure-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+Structure-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+Structure-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+Structure-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+K+Q
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+PCs-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+PCs-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+PCs-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+PCs-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+PCs-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+PCs-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+K+P
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Structure+PCs-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Structure+PCs-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Structure+PCs-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Structure+PCs-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Structure+PCs-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Structure+PCs-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+Q+P
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" rotate="90" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+Structure+PCs-general.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+Structure+PCs-additive.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+Structure+PCs-1-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+Structure+PCs-1-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+Structure+PCs-2-dom-alt.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/fdr/plot-gwaspoly-manhattan-Kinship+Structure+PCs-2-dom-ref.pdf
+	lyxscale 20
+	scale 20
+	BoundingBox 80bp 65bp 430bp 435bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+K+Q+P
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Expected
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Comparación de gráficos Manhattan para los 4 modelos de GWAS (Naive, Kinship,
+ Structure, Structure+Kinship) y los 4 modelos de acción de gen disponibles
+ en el software GWASpoly (general, additive, 1-dom, 2-dom).
+\end_layout
 
 \end_inset
 

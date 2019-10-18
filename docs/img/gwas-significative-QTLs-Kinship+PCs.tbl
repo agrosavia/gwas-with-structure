@@ -1,5 +1,5 @@
 Trait	Model	Threshold	Marker	Chrom	Position	Ref	Alt	Score	Effect
-gota	general	4.72	solcap_snp_c1_12386	2	37411847	0	1	15.86	NA
+gota	general	4.72	solcap_snp_c1_12386	0	37400805	0	1	15.86	NA
 gota	general	4.72	solcap_snp_c1_5895	2	48564909	0	1	12.03	NA
 gota	general	4.72	solcap_snp_c1_6869	3	41992129	0	1	6.57	NA
 gota	general	4.72	solcap_snp_c1_526	3	46395963	0	1	7.69	NA
