@@ -34,11 +34,11 @@ mapTableMat = matrix (ncol=5)
 mapTable = as.table (mapTableMat)
 
 for (i in 1:n) {
-	snp = snpsTable [i,]
+	snp    = snpsTable [i,]
 	idsnp  = snp [4]
-	chr = sprintf ("ST4.03ch%02d",strtoi (snp[5]))
-	pos = strtoi(snp [6])
-	scr = snp [9]
+	chr    = sprintf ("ST4.03ch%02d",strtoi (snp[5]))
+	pos    = snp [6]
+	scr    = snp [9]
 	msg (chr, pos, scr)
 
 
