@@ -1,4 +1,5 @@
 #!/usr/bin/Rscript
+# r1.5: Added SNPs annotations from Ship
 # r1.4: Working with data from agrosavia, with improved graphics
 # r1.2: With basic parameters handling and best graphics
 # r0.1: Functions + write to RData cache
